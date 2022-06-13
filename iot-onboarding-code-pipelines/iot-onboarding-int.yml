@@ -374,7 +374,7 @@ Resources:
         Type: CODEPIPELINE
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        Image: aws/codebuild/standard:5.0
         ImagePullCredentialsType: CODEBUILD
         PrivilegedMode: false
         Type: LINUX_CONTAINER
@@ -392,7 +392,7 @@ Resources:
                   "phases": {
                     "install": {
                       "runtime-versions": {
-                        "nodejs": 10
+                        "nodejs": 14
                       },
                       "commands": [
                         "echo \"CodeBuild is running in $AWS_REGION\" && aws configure set region $AWS_REGION",

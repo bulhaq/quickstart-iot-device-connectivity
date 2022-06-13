@@ -105,13 +105,13 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}api/onboard/DEV_00000001",
+					"raw": "{{baseUrl}}api/onboard/{{deviceName}}",
 					"host": [
 						"{{baseUrl}}api"
 					],
 					"path": [
 						"onboard",
-						"DEV_00000001"
+						"{{deviceName}}"
 					]
 				}
 			},
@@ -157,13 +157,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}api/onboard/DEV_00000001",
+					"raw": "{{baseUrl}}api/onboard/{{deviceName}}",
 					"host": [
 						"{{baseUrl}}api"
 					],
 					"path": [
 						"onboard",
-						"DEV_00000001"
+						"{{deviceName}}"
 					]
 				}
 			},
@@ -225,11 +225,6 @@
 			"id": "083271ee-8125-4318-b8cc-2d2c6a64e406",
 			"key": "tokenEnpoint",
 			"value": ""
-		},
-		{
-			"id": "bc056273-5a4b-4e67-a941-40d42904f8ea",
-			"key": "deviceName",
-			"value": "DEV_00000001"
 		}
 	],
 	"protocolProfileBehavior": {}

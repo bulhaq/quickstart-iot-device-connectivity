@@ -173,11 +173,6 @@
 			"id": "96a0512c-72a4-4fe7-adde-bad12c771bd2",
 			"key": "tokenEnpoint",
 			"value": ""
-		},
-		{
-			"id": "b1e897b2-7f54-4071-869e-b3b725ab5fee",
-			"key": "deviceName",
-			"value": "DEV_00000001"
 		}
 	],
 	"protocolProfileBehavior": {}

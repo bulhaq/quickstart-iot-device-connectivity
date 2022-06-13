@@ -1,7 +1,7 @@
 #!/bin/sh
 
-env=$1
-bucket=$2
+env=LOCAL
+bucket=DOESNT_MATTER
 #update this variable to specify the name of your loval env
 LOCAL_ENV_NAME=dev
 
@@ -16,8 +16,8 @@ then
 else
 
 echo "1. getting infra configuration for environement $env"
-aws s3 cp s3://$bucket/infra-config-$env.json infra-config.json
-cat infra-config.json
+# aws s3 cp s3://$bucket/infra-config-$env.json infra-config.json
+jq . infra-config.json
 refreshToken=$(jq -r .cognitoRefreshToken infra-config.json)
 clientId=$(jq -r .cognitoClientId infra-config.json)
 apiGatewayUrl=$(jq -r .onboardingApiEndpoint infra-config.json)
@@ -33,12 +33,12 @@ rm tokens.json
 rm device.json
 echo "3.1 getting ID token form token enpoint: $tokenEnpoint?grant_type=refresh_token&client_id=$clientId&refresh_token=$refreshToken"
 curl --location --request POST "$tokenEnpoint?grant_type=refresh_token&client_id=$clientId&refresh_token=$refreshToken" --header 'Content-Type: application/x-www-form-urlencoded' -o tokens.json
-cat tokens.json
+jq . tokens.json
 echo ""
 echo "3.2 Getting onboarded device data at "
 token=$(jq -r .access_token tokens.json)
 curl --location --request POST $apiGatewayUrl"api/onboard/$TEST_DEVICE" --header "Authorization: $token" -o device.json
-cat device.json
+jq . device.json
 echo "3.3 Gettin Certificate"
 jq -r .credential.certificatePem device.json>cert.pem
 cat cert.pem
@@ -47,7 +47,7 @@ jq -r .credential.privateKey device.json>pk.pem
 cat pk.pem
 mqttEndpoint=$(jq -r .mqttEndpoint device.json)
 echo "3.5 Starting Connectiviy test for device $TEST_DEVICE at endpoint $mqttEndpoint"
-mosquitto_pub -h $mqttEndpoint\
+echo mosquitto_pub -h $mqttEndpoint\
               -p 8883\
               --cafile AmazonRootCA1.pem\
               --cert cert.pem\
@@ -57,8 +57,10 @@ mosquitto_pub -h $mqttEndpoint\
               -i $TEST_DEVICE\
               -m "{\"message\": \"hello IOT Onboarding Quickstart from device: $TEST_DEVICE\"}"
 
-echo ""
-echo "4. Testing delete for '$env' on api Gateway enpoint:$apiGatewayUrl "
-newman run --env-var deviceName=$TEST_DEVICE  --env-var tokenEnpoint=$tokenEnpoint --env-var baseUrl=$apiGatewayUrl --env-var clientId=$clientId --env-var refreshToken=$refreshToken iotOnboardingdelete.postman_collection.json
+# echo ""
+# echo "4. Testing delete for '$env' on api Gateway enpoint:$apiGatewayUrl "
+# newman run --env-var deviceName=$TEST_DEVICE  --env-var tokenEnpoint=$tokenEnpoint --env-var baseUrl=$apiGatewayUrl --env-var clientId=$clientId --env-var refreshToken=$refreshToken iotOnboardingdelete.postman_collection.json
 
 fi
+
+mosquitto_pub -h armrdwyonijql-ats.iot.us-east-1.amazonaws.com -p 8883 --cafile AmazonRootCA1.pem --cert cert.pem --key pk.pem -t data/test -d -i DEV_RPI_0000002 -m "{\"message\": \"hello IOT Onboarding Quickstart from device: DEV_RPI_0000002, this is bhaq reporting for duty\"}"   
